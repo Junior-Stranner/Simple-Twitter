@@ -15,8 +15,9 @@ public class User {
     @Column(name = "user_id")
     private UUID userId;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
+    @Column( nullable = false)
     private String password;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -59,7 +60,7 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-
-   /* public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
+  /*  Método comentado que verifica se o login está correto.
+    public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(loginRequest.password(), this.password);*/
 }

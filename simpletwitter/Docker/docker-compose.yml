@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"  # PostgreSQL padrão usa a porta 5432
+    environment:
+      - POSTGRES_USER=postgres  # Usuário administrador do PostgreSQL
+      - POSTGRES_PASSWORD=123  # Senha do usuário administrador
+      - POSTGRES_DB=mydb  # Nome do banco de dados a ser criado
