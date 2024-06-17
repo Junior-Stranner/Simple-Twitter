@@ -1,4 +1,4 @@
-package br.com.judev.simpletwitter.config;
+/*package br.com.judev.simpletwitter.config;
 
 import br.com.judev.simpletwitter.entities.Role;
 import br.com.judev.simpletwitter.entities.User;
@@ -25,7 +25,7 @@ public class AdminUserConfig implements CommandLineRunner {
     private final BCryptPasswordEncoder passwordEncoder;
 
     // Injetando a senha do administrador através de uma variável de ambiente
-    @Value("${admin.password:admin123}")
+    @Value("${admin.password}")
     private String adminPassword;
 
     public AdminUserConfig(RoleRepository roleRepository,
@@ -61,4 +61,4 @@ public class AdminUserConfig implements CommandLineRunner {
                 }
         );
     }
-}
+}*/

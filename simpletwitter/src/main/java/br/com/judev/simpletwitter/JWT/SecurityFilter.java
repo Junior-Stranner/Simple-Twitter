@@ -1,5 +1,6 @@
-package br.com.judev.simpletwitter.JWT;
+/*package br.com.judev.simpletwitter.JWT;
 
+import br.com.judev.simpletwitter.JWT.JwtService;
 import br.com.judev.simpletwitter.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,50 +20,55 @@ import java.io.IOException;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
+
+    private static final Logger log = LoggerFactory.getLogger(SecurityFilter.class);
+
     @Autowired
     private JwtService jwtService;
 
     @Autowired
     private UserRepository userRepository;
 
-    private static final Logger log = LoggerFactory.getLogger(SecurityFilter.class);
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String token = request.getHeader(JwtService.JWT_AUTHORIZATION); // Obtém o token JWT do cabeçalho da requisição
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
+        String token = extractToken(request); // Extrai o token do cabeçalho da requisição
+        log.debug("Token extraído do cabeçalho: {}", token);
 
-        if (token == null || !token.startsWith(JwtService.JWT_BEARER)) { // Verifica se o token está ausente ou não começa com 'Bearer '
-            log.info("JWT Token está nulo, vazio ou não iniciado com 'Bearer '."); // Registra um log informativo
+        if (token == null || !jwtService.isTokenValid(token)) { // Verifica se o token é nulo ou inválido
+            log.info("JWT Token está nulo, vazio ou inválido."); // Registra um log informativo
             filterChain.doFilter(request, response); // Continua com a cadeia de filtros
             return; // Retorna
         }
 
-        if (!JwtService.isTokenValid(token)) { // Verifica se o token JWT é inválido ou expirou
-            log.warn("JWT Token está inválido ou expirado."); // Registra um log de aviso
+        String email = jwtService.getEmailFromToken(token); // Obtém o email do usuário a partir do token JWT
+        log.debug("Email extraído do token: {}", email);
+
+        if (email == null) {
+            log.warn("Email de usuário não encontrado no token JWT."); // Registra um log de aviso
             filterChain.doFilter(request, response); // Continua com a cadeia de filtros
             return; // Retorna
         }
-        var subject = jwtService.getEmailFromToken(token);
 
-        if (subject == null) {
-            log.warn("email de usuário não encontrado no token JWT.");
-            filterChain.doFilter(request, response); // Continua com a cadeia de filtros
-            return;
-        }
-
-        UserDetails user = userRepository.findByEmail(subject); // Buscar o usuário pelo email
-        if (user == null) {
-            log.warn("Detalhes do usuário não encontrados para o email: {}", subject);
-            filterChain.doFilter(request, response); // Continua com a cadeia de filtros
-            return;
-        }
-
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                user, null, user.getAuthorities());
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        toAuthentication(request, email); // Realiza a autenticação do usuário
 
         filterChain.doFilter(request, response); // Continua com a cadeia de filtros
+    }
+
+    private void toAuthentication(HttpServletRequest request, String email) {
+        log.debug("Iniciando autenticação para o email: {}", email);
+        UserDetails userDetails = userRepository.findByEmail(email); // Buscar o usuário pelo email
+        if (userDetails == null) {
+            log.warn("Detalhes do usuário não encontrados para o email: {}", email); // Registra um log de aviso
+            return; // Retorna
+        }
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities()); // Cria um token de autenticação com os detalhes do usuário
+
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); // Define os detalhes da autenticação
+
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken); // Define a autenticação no contexto de segurança
+        log.info("Autenticação realizada com sucesso para o email: {}", email);
     }
 
     // Método para extrair o token JWT do cabeçalho da requisição
@@ -73,5 +79,5 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
         return null;
     }
-
 }
+*/

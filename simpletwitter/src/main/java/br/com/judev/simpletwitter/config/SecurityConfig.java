@@ -1,4 +1,4 @@
-package br.com.judev.simpletwitter.config;
+/*package br.com.judev.simpletwitter.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,4 +43,19 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
 
     }
+     @Override
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username -> {
+            User user = userService.findUserByUsername(username);
+            if (user != null) {
+                List<GrantedAuthority> authorities = new ArrayList<>();
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + userService.getUserRole(user)));
+                return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+            } else {
+                throw new UsernameNotFoundException("User not found.");
+            }
+        };
+
 }
+*/

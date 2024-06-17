@@ -1,4 +1,14 @@
-package br.com.judev.simpletwitter.JWT;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+import javax.crypto.SecretKey;/*import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+import javax.crypto.SecretKey;/*package br.com.judev.simpletwitter.JWT;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -24,14 +34,24 @@ public class JwtService {
 
     private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
-    @Value("${api.security.token.secret}")
+    @Value("${jwt.secret}")
     private static String secret;
 
     /**
      * Construtor JwtService. Verifica se a chave secreta JWT foi configurada corretamente.
      * Se não estiver configurada, lança uma exceção IllegalStateException.
-     */
-    public JwtService() {
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+public JwtService() {
         if (secret == null || secret.isEmpty()) {
             throw new IllegalStateException("A chave secreta JWT não foi configurada corretamente nas variáveis de ambiente.");
         }
@@ -41,8 +61,12 @@ public class JwtService {
      * Método para gerar a chave de assinatura usando a chave secreta configurada.
      *
      * @return SecretKey - Chave de assinatura HMAC-SHA para JWT.
-     */
-    private static SecretKey generateKey() {
+
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+private static SecretKey generateKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -52,8 +76,11 @@ public class JwtService {
      * @param username - Nome de usuário para o qual o token será gerado.
      * @param role     - Papel (role) associado ao usuário.
      * @return JwtToken - Objeto JwtToken encapsulando o token JWT gerado.
-     */
-    public String generateToken(String username, String role) {
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+public String generateToken(String username, String role) {
         Date issuedAt = new Date(); // Data de emissão do token
         Date expiration = toExpireDate(issuedAt); // Data de expiração do token
 
@@ -75,8 +102,11 @@ public class JwtService {
      *
      * @param start - Data de emissão do token.
      * @return Date - Data de expiração calculada.
-     */
-    private Date toExpireDate(Date start) {
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+private Date toExpireDate(Date start) {
         LocalDateTime dateTime = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime end = dateTime.plusDays(0).plusHours(0).plusMinutes(30); // Expiração em 30 minutos
         return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
@@ -87,7 +117,7 @@ public class JwtService {
      *
      * @param token - Token JWT do qual as reivindicações serão extraídas.
      * @return Claims - Objeto Claims contendo as reivindicações do token JWT.
-     */
+
     private Claims getClaimsFromToken(String token) {
         try {
             return Jwts.parserBuilder()
@@ -106,7 +136,7 @@ public class JwtService {
      *
      * @param token - Token JWT do qual o nome de usuário será extraído.
      * @return String - Nome de usuário contido no token JWT, ou null se o token for inválido.
-     */
+
     public String getEmailFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
         return claims != null ? claims.getSubject() : null;
@@ -117,7 +147,7 @@ public class JwtService {
      *
      * @param token - Token JWT a ser validado.
      * @return boolean - True se o token for válido, False se o token for inválido.
-     */
+
     public static boolean isTokenValid(String token) {
         try {
             Jwts.parserBuilder()
@@ -136,11 +166,11 @@ public class JwtService {
      *
      * @param token - Token JWT que pode conter o prefixo "Bearer ".
      * @return String - Token JWT sem o prefixo "Bearer ".
-     */
+
     private static String refactorToken(String token) {
         if (token.startsWith(JWT_BEARER)) {
             return token.substring(7);
         }
         return token;
     }
-}
+}*/

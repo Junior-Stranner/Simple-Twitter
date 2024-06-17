@@ -1,7 +1,6 @@
 package br.com.judev.simpletwitter.entities;
 
 import jakarta.persistence.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
 import java.util.UUID;
