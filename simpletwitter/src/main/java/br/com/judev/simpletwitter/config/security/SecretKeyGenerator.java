@@ -4,20 +4,18 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 public class SecretKeyGenerator {
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private static final int SECRET_KEY_LENGTH = 32;
+
     public static void main(String[] args) {
-        // Gerar uma chave secreta aleatória com 32 bytes (256 bits)
-        byte[] secretKey = generateSecretKey(32);
+        SecureRandom random = new SecureRandom();
+        StringBuilder secretKey = new StringBuilder(SECRET_KEY_LENGTH);
 
-        // Gerar uma chave secreta aleatória com 32 bytes (256 bits)
-        String base64Key = Base64.getEncoder().encodeToString(secretKey);
-        System.out.println("Chave secreta gerada: "+base64Key);
-    }
+        for (int i = 0; i < SECRET_KEY_LENGTH; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            secretKey.append(CHARACTERS.charAt(index));
+        }
 
-    private static byte[] generateSecretKey(int keyLenght) {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] key = new byte[keyLenght];
-        secureRandom.nextBytes(key);
-        return key;
-
+        System.out.println("Generated Secret Key: " + secretKey.toString());
     }
 }

@@ -2,15 +2,16 @@ package br.com.judev.simpletwitter.dto;
 
 import br.com.judev.simpletwitter.entities.User;
 
-public class LogingRequestDto {
+public class LoginRequestDto {
 
     private String username;
     private String password;
 
-    public LogingRequestDto() {
+    public LoginRequestDto() {
     }
 
-    public LogingRequestDto(User entity) {
+
+    public LoginRequestDto(User entity) {
         username = entity.getUsername();
         password = entity.getPassword();
     }
@@ -30,4 +31,5 @@ public class LogingRequestDto {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }

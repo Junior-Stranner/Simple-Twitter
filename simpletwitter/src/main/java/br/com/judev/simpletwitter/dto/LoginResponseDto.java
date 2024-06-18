@@ -4,7 +4,7 @@ public class LoginResponseDto {
     private String acessToken;
     private long expireIn;
 
-    public LoginResponseDto() {
+    public LoginResponseDto(String jwtValue, long expiresIn) {
     }
 
 

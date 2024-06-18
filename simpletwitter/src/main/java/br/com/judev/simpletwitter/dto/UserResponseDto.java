@@ -1,7 +1,8 @@
 package br.com.judev.simpletwitter.dto;
 
-import br.com.judev.simpletwitter.entities.User;
+import br.com.judev.simpletwitter.entities.Role;
 
+import java.util.Set;
 import java.util.UUID;
 
 public class UserResponseDto {
@@ -9,7 +10,7 @@ public class UserResponseDto {
     private String username;
     private String password;
 
-    public UserResponseDto() {
+    public UserResponseDto(UUID userId, String username, Set<Role> roles) {
     }
 
     public UUID getUserId() {

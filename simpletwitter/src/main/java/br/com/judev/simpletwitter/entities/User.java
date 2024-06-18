@@ -1,6 +1,8 @@
 package br.com.judev.simpletwitter.entities;
 
+import br.com.judev.simpletwitter.dto.LoginRequestDto;
 import jakarta.persistence.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
 import java.util.UUID;
@@ -59,7 +61,13 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-  /*  Método comentado que verifica se o login está correto.
-    public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
-        return passwordEncoder.matches(loginRequest.password(), this.password);*/
+
+
+    public boolean isLoginCorrect(LoginRequestDto loginRequest, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(loginRequest.getPassword(), this.password);
+    }
+
+    public boolean isPresent() {
+        return this.getUserId() != null;
+    }
 }
