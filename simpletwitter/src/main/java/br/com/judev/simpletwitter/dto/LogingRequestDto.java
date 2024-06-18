@@ -2,22 +2,17 @@ package br.com.judev.simpletwitter.dto;
 
 import br.com.judev.simpletwitter.entities.User;
 
-import java.util.UUID;
+public class LogingRequestDto {
 
-public class UserResponseDto {
-    private UUID userId;
     private String username;
     private String password;
 
-    public UserResponseDto() {
+    public LogingRequestDto() {
     }
 
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public LogingRequestDto(User entity) {
+        username = entity.getUsername();
+        password = entity.getPassword();
     }
 
     public String getUsername() {

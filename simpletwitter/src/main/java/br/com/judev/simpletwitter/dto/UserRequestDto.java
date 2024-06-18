@@ -1,4 +1,5 @@
 package br.com.judev.simpletwitter.dto;
+import br.com.judev.simpletwitter.entities.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -11,9 +12,9 @@ public class UserRequestDto {
     @Size(min = 6, max = 10)
     private String password;
 
-    public UserRequestDto(String username, String password) {
-        this.username = username;
-        this.password = password;
+     public UserRequestDto(User entity) {
+         username = entity.getUsername();
+         password = entity.getPassword();
     }
 
     public UserRequestDto() {

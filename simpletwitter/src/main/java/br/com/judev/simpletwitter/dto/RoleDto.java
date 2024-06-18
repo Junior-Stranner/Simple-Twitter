@@ -1,13 +1,16 @@
 package br.com.judev.simpletwitter.dto;
 
+import br.com.judev.simpletwitter.entities.Role;
+
 public class RoleDto {
     private long roleId;
     private String name;
 
-    public RoleDto(String name, long roleId) {
-        this.name = name;
-        this.roleId = roleId;
+    public RoleDto(Role entity) {
+     roleId = entity.getRoleId();
+     name = entity.getName();
     }
+
 
     public RoleDto() {
     }

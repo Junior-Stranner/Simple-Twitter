@@ -2,19 +2,19 @@ package br.com.judev.simpletwitter.dto;
 
 import java.util.List;
 
-public class FeedItemDto {
-    private List<FeedItemDto> feedItems;
+public class FeedDto {
+    private List<FeedDto> feedItems;
     private int page;
     private int pageSize;
     private int totalPages;
     private long totalElements;
 
     // Construtor vazio (default)
-    public FeedItemDto() {
+    public FeedDto(Long tweetId, String content, String username) {
     }
 
     // Construtor com todos os campos
-    public FeedItemDto(List<FeedItemDto> feedItems, int page, int pageSize, int totalPages, long totalElements) {
+    public FeedDto(List<FeedDto> feedItems, int page, int pageSize, int totalPages, long totalElements) {
         this.feedItems = feedItems;
         this.page = page;
         this.pageSize = pageSize;
@@ -23,11 +23,11 @@ public class FeedItemDto {
     }
 
     // Getters e Setters
-    public List<FeedItemDto> getFeedItems() {
+    public List<FeedDto> getFeedItems() {
         return feedItems;
     }
 
-    public void setFeedItems(List<FeedItemDto> feedItems) {
+    public void setFeedItems(List<FeedDto> feedItems) {
         this.feedItems = feedItems;
     }
 
