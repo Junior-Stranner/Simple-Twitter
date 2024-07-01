@@ -1,62 +1,63 @@
 package br.com.judev.simpletwitter.config.security;
 
-import br.com.judev.simpletwitter.service.TokenService;
+import br.com.judev.simpletwitter.entities.User;
+import br.com.judev.simpletwitter.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.core.token.TokenService;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 
-public class SecurityFilter  extends OncePerRequestFilter {
-
-    private static final Logger log = LoggerFactory.getLogger(SecurityFilter.class);
+@Component
+public class SecurityFilter extends OncePerRequestFilter {
 
     @Autowired
-    private TokenService tokenService; // Injeção do serviço TokenService
+    UserRepository userRepository; // Injeção de dependência do repositório de usuários
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String authorizationHeader = request.getHeader(TokenService.JWT_AUTHORIZATION); // Obtém o cabeçalho Authorization
+        // Recupera o token JWT presente no cabeçalho de autorização da requisição
+        var token = this.recoverToken(request);
 
-        String username = null;
-        String jwtToken = null;
+        // Valida o token JWT e extrai o login (email) do usuário, se válido
+        var login = tokenService.validateToken(token);
 
-        // Verifica se o cabeçalho Authorization está presente e no formato correto
-        if (authorizationHeader != null && authorizationHeader.startsWith(TokenService.JWT_BEARER)) {
-            jwtToken = authorizationHeader.substring(TokenService.JWT_BEARER.length()); // Extrai somente o token JWT
-            try {
-                username = tokenService.getUsernameFromToken(jwtToken); // Obtém o nome de usuário a partir do token JWT
-            } catch (Exception e) {
-                log.error("Erro ao extrair nome de usuário do token JWT", e);
-            }
-        } else {
-            log.warn("Token JWT ausente ou não começando com 'Bearer '");
+        // Se o login (email) extraído do token for válido
+        if(login != null){
+            // Busca o usuário correspondente ao email no banco de dados
+            User user = userRepository.findByUsername(login).orElseThrow(() -> new RuntimeException("User Not Found"));
+
+            // Define as autorizações do usuário (por exemplo, ROLE_USER)
+            var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
+            // Cria uma instância de autenticação com as informações do usuário
+            var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+
+            // Define a autenticação no contexto de segurança do Spring
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
-        // Se o nome de usuário foi obtido com sucesso e o contexto de segurança não está definido
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = tokenService.loadUserByUsername(username); // Obtém os detalhes do usuário pelo nome de usuário
+        // Continua o encadeamento do filtro para processar a requisição
+        filterChain.doFilter(request, response);
+    }
 
-            // Se userDetails != null, continue
-            if (userDetails != null && tokenService.validateToken(jwtToken)) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()); // Cria um token de autenticação com os detalhes do usuário
+    // Método para recuperar o token JWT do cabeçalho de autorização da requisição
+    private String recoverToken(HttpServletRequest request){
+        var authHeader = request.getHeader("Authorization");
 
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); // Define os detalhes da autenticação
+        // Se o cabeçalho de autorização estiver ausente, retorna null
+        if(authHeader == null) return null;
 
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken); // Define a autenticação no contexto de segurança
-            }
-        }
-
-        filterChain.doFilter(request, response); // Continua com a cadeia de filtros
+        // Remove a parte "Bearer " do valor do cabeçalho de autorização e retorna o token JWT
+        return authHeader.replace("Bearer ", "");
     }
 }
